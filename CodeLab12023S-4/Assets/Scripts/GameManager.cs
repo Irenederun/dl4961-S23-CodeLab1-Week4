@@ -35,18 +35,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public List<int> records = new List<int>();
+    public List<int> records = new List<int>();//make a list that will hold all the record scores
 
-    private string FIlE_PATH;
-    private const string FILE_DIR = "/Data/";
-    private const string FILE_NAME = "records.txt";
+    private string FIlE_PATH;//create a string that will hold file path
+    private const string FILE_DIR = "/Data/";//directory string
+    private const string FILE_NAME = "records.txt";//save file name
 
-    public List<string> playerNames = new List<string>();
+    public List<string> playerNames = new List<string>();//a list that will hold all player names
     private string NAME_FILE_PATH;
     private const string NAME_FILE_NAME = "names.txt";
     
-    
-
     private void Awake()
     {
         if (Instance == null)
@@ -67,10 +65,10 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        FIlE_PATH = Application.dataPath + FILE_DIR + FILE_NAME;
+        FIlE_PATH = Application.dataPath + FILE_DIR + FILE_NAME;//initialize paths
         NAME_FILE_PATH = Application.dataPath + FILE_DIR + NAME_FILE_NAME;
 
-        if (File.Exists(FIlE_PATH) == false)
+        if (File.Exists(FIlE_PATH) == false)//if no file exists,create one so there's something to read later
         {
             File.WriteAllText(FIlE_PATH, "Highest Records:\n" +
                                                 "5" + "\n" +
@@ -83,11 +81,11 @@ public class GameManager : MonoBehaviour
         if (File.Exists(NAME_FILE_PATH) == false)
         {
             File.WriteAllText(NAME_FILE_PATH, "Player Names:\n" 
-                                              + "A" + "\n"
-                                              + "B" + "\n"
-                                              + "C" + "\n"
-                                              + "D" + "\n"
-                                              + "E" + "\n");
+                                              + "a" + "\n"
+                                              + "b" + "\n"
+                                              + "c" + "\n"
+                                              + "d" + "\n"
+                                              + "e" + "\n");
         }
     }
 
@@ -111,7 +109,7 @@ public class GameManager : MonoBehaviour
             
             beginText.text = "Too Bad! You did not make it to the ranking. Try Again!";
             
-            UpdateHighScores();
+            UpdateHighScores();//call function
         }
 
         if (Score == targetScore)
@@ -128,52 +126,51 @@ public class GameManager : MonoBehaviour
 
     void UpdateHighScores()
     {
-        if (records.Count == 0) 
+        if (records.Count == 0) //if the record list is empty, which it should be every time upon restart
         {
-            string fileContents = File.ReadAllText(FIlE_PATH);
-            string[] fileSplit = fileContents.Split("\n");
+            string fileContents = File.ReadAllText(FIlE_PATH);//read from existing file
+            string[] fileSplit = fileContents.Split("\n");//split 
             
             string nameFileContents = File.ReadAllText(NAME_FILE_PATH);
             string[] nameFileSplit = nameFileContents.Split("\n");
 
-            for (int i = 1; i < (fileSplit.Length - 1); i++)
+            for (int i = 1; i < (fileSplit.Length - 1); i++)//starting from second line 
             {
-                records.Add(Int32.Parse(fileSplit[i]));
+                records.Add(Int32.Parse(fileSplit[i]));//turn string into integers and add to list
                 playerNames.Add(nameFileSplit[i]);
             }
         }
 
-        for (int i = 0; i < records.Count; i++)
+        for (int i = 0; i < records.Count; i++)//for every time in the list
         {
-            if (records[i] < Score)
+            if (records[i] < Score)//compare it to current score
             {
-                records.Insert(i, Score);
-                playerNames.Insert(i, "YOU");
-                //playerNames[i] = "YOU";
-                beginText.text = "Congratulations! You've created a high score!";
-                break;
+                records.Insert(i, Score);//insert into list
+                playerNames.Insert(i, ButtonPres.nickName);//insert corresponding player name
+                beginText.text = "Congratulations! You've created a high score!";//change display text
+                break;//avoid infinite loop
             }
         }
 
-        if (records.Count > 5)
+        if (records.Count > 5)//cut at top 5
         {
             records.RemoveRange(5, records.Count - 5);
             playerNames.RemoveRange(5, playerNames.Count - 5);
         }
         
-        string recordsStr = "Highest Records:\n";
-        string nameStr = "Player Name:\n";
+        string recordsStr = "Highest Records:\n";//create a string to hold the scores 
+        string nameStr = "Player Name:\n";//and names
 
-        for (int i = 0; i < records.Count; i++)
+        for (int i = 0; i < records.Count; i++)//for every item in the records list
         {
-            recordsStr += records[i] + "\n";
+            recordsStr += records[i] + "\n";//add to the string
             nameStr += playerNames[i] + "\n";
         }
         
-        recordListText.text = recordsStr;
+        recordListText.text = recordsStr;//display string
         names.text = nameStr;
 
-        File.WriteAllText(FIlE_PATH, recordsStr);
+        File.WriteAllText(FIlE_PATH, recordsStr);//write into txt
         File.WriteAllText(NAME_FILE_PATH, nameStr);
     }
 }
